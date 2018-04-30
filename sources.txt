@@ -1,0 +1,6 @@
+https://blog.philipphauer.de/testing-restful-services-java-best-practices/
+http://www.baeldung.com/integration-testing-a-rest-api
+http://toolsqa.com/rest-assured/read-response-body-using-rest-assured/
+http://joel-costigliola.github.io/assertj/
+http://www.vogella.com/tutorials/AssertJ/article.html
+
