@@ -3,4 +3,6 @@ http://www.baeldung.com/integration-testing-a-rest-api
 http://toolsqa.com/rest-assured/read-response-body-using-rest-assured/
 http://joel-costigliola.github.io/assertj/
 http://www.vogella.com/tutorials/AssertJ/article.html
+https://howtodoinjava.com/testng/testng-executing-parallel-tests/
+http://testng.org/doc/eclipse.html#eclipse-create-launch
 
