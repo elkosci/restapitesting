@@ -1,17 +1,14 @@
 package tests.rest;
-import com.jayway.restassured.builder.RequestSpecBuilder;
-import com.jayway.restassured.filter.log.RequestLoggingFilter;
-import com.jayway.restassured.filter.log.ResponseLoggingFilter;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.specification.RequestSpecification;
+import tests.config.GetConfiguration;
+
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import org.testng.ITestContext;
 import org.testng.Reporter;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import tests.config.ReadConfiguration;
-
+import org.testng.annotations.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,45 +22,96 @@ public class RestApiBaseTest {
     protected static RequestSpecification spec;
     protected static RequestSpecification specMalformed;
     protected static RequestSpecification specLocalhost;
+    protected static RequestSpecification specLocalhostText;
     protected static ResponseLoggingFilter rspFilter;
     protected static RequestLoggingFilter rstFilter;
+    protected static PrintStream outFileLog;
+    protected static File logFileHandle;
+    protected static Map<String, String> config;
 
-
-    @BeforeClass(alwaysRun = true)
-    public void setUpClass(final ITestContext testContext){
-
-
-        Reporter.log(String.format("Test \"%s\" running", testContext.getName()), 1, true);
+    @BeforeSuite
+    public void setUpSuite(){
         try {
-            Map<String, String> config = ReadConfiguration.getPropValues();
-            File file = new File(config.get("logFile"));
-            FileOutputStream fout = new FileOutputStream(file);
-            PrintStream out = new PrintStream(fout);
-            rspFilter = new ResponseLoggingFilter(out);
-            rstFilter = new RequestLoggingFilter(out);
-            spec = new RequestSpecBuilder()
-                    .setContentType(ContentType.JSON)
-                    .setBaseUri(config.get("baseUrl"))
-                    .addFilter(rspFilter)//log request and response for better debugging. You can also only log if a requests fails.
-                    .addFilter(rstFilter)
-                    .build();
-            specMalformed = new RequestSpecBuilder()
-                    .setContentType(ContentType.URLENC)
-                    .setBaseUri("http://jsonplaceholder.typicode.com")
-                    .addFilter(rspFilter)//log request and response for better debugging. You can also only log if a requests fails.
-                    .addFilter(rstFilter)
-                    .build();
-            specLocalhost = new RequestSpecBuilder()
-                    .setContentType(ContentType.URLENC)
-                    .setBaseUri("http://localhost:3000")
-                    .addFilter(rspFilter)//log request and response for better debugging. You can also only log if a requests fails.
-                    .addFilter(rstFilter)
-                    .build();
+            config = GetConfiguration.getProperites();
+            logFileHandle =
+                    new File(config.get("logFile"));
+            FileOutputStream fout =
+                    new FileOutputStream(logFileHandle);
+            outFileLog =
+                    new PrintStream(fout);
+            if (outFileLog != null){
+                Reporter.log(
+                        "Set up a log file: " + config.get("logFile"),
+                        1,
+                        true);
+            }
         } catch (IOException ex) {
-            System.out.println("There was a problem creating/writing to the temp file");
+            String msg =
+                    String.format("Problem occurred during creation of log file \"%s\"",
+                            config.get("logFile"));
+            System.out.println(msg);
             ex.printStackTrace();
         }
+    }
+    @AfterSuite
+    public void tearDownSuite(){
+        if (outFileLog != null){
+            outFileLog.close();
+            logFileHandle.renameTo(
+                    new File(config.get("logBackupPath")));
+            Reporter.log(
+                    "Move log file: " + config.get("logFile")
+                            + " to: " + config.get("logBackupPath"),
+                    1,
+                    true);
+            File f =
+                    new File(config.get("logBackupPath"));
+            if(f.exists()) {
+                System.out.println(
+                        String.format("File \"%s\" successfully created.",
+                                config.get("logBackupPath")));
+            }
 
+        }
+    }
+    @BeforeClass(alwaysRun = true)
+    public void setUpClass(final ITestContext testContext){
+        String msg =
+                String.format("Test \"%s\" running", testContext.getName());
+        Reporter.log(msg,true);
+        outFileLog.println(msg);
+        rspFilter =
+                new ResponseLoggingFilter(outFileLog);
+        rstFilter =
+                new RequestLoggingFilter(outFileLog);
+        spec =
+                new RequestSpecBuilder()
+                .setContentType(ContentType.JSON)
+                .setBaseUri(config.get("baseUrl"))
+                .addFilter(rspFilter)
+                .addFilter(rstFilter)
+                .build();
+        specMalformed =
+                new RequestSpecBuilder()
+                .setContentType(ContentType.URLENC)
+                .setBaseUri(config.get("baseUrl"))
+                .addFilter(rspFilter)
+                .addFilter(rstFilter)
+                .build();
+        specLocalhost =
+                new RequestSpecBuilder()
+                .setContentType(ContentType.JSON)
+                .setBaseUri("http://localhost:3000")
+                .addFilter(rspFilter)
+                .addFilter(rstFilter)
+                .build();
+        specLocalhostText =
+                new RequestSpecBuilder()
+                .setContentType(ContentType.TEXT)
+                .setBaseUri("http://localhost:3000")
+                .addFilter(rspFilter)
+                .addFilter(rstFilter)
+                .build();
     }
     @AfterClass
     public void tearDownClass(){
@@ -71,11 +119,16 @@ public class RestApiBaseTest {
     }
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) {
-    //        Reporter.log("Running test case: " + method.getName(), 1, true);
-        Reporter.log(String.format("Running test case: \"%s\".", method.getName()),true);
+        String msg =
+                String.format("Running test case: \"%s\".", method.getName());
+        outFileLog.println(msg);
+        Reporter.log(msg,true);
     }
     @AfterMethod(alwaysRun = true)
     public void tearDown(Method method) {
-        Reporter.log(String.format("This is clean up after test case: \"%s\".", method.getName()),true);
+        String msg =
+                String.format("This is clean up after test case: \"%s\".", method.getName());
+        outFileLog.println(msg);
+        Reporter.log(msg,true);
     }
 }
