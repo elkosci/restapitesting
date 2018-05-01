@@ -19,6 +19,9 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
 
 public class RestPostsTests extends RestApiBaseTest {
@@ -145,6 +148,25 @@ public class RestPostsTests extends RestApiBaseTest {
         assertThat(testObject.getId()).isEqualTo(retrievedObject.getId());
         assertThat(testObject.getUserId()).isEqualTo(retrievedObject.getUserId());
         assertThat(testObject.getTitle()).isEqualTo(retrievedObject.getTitle());
+    }
+
+    @Test(groups = {"GET.200", "localhost44", "Posts"} /*, threadPoolSize = 3, invocationCount = 6,  timeOut = 1000*/)
+    public void testGetMultiplePostsCheckBody() {
+        given().spec(specLocalhost).body("[1,2,3]")
+                .when().get("/")
+                .then().statusCode(200).body("headers.content-length", equalTo("7"));
+        given().spec(specLocalhost).body("[1,2,3]")
+                .when().get("/")
+                .then().statusCode(200).body("body", containsString("_server_addon"));
+        given().spec(specLocalhost).body("[1,2,3]")
+                .when().get("/")
+                .then().statusCode(200).body("body".split(",")[0], containsString("1"));
+        JsonPath jspath = given().spec(specLocalhost).body("[1,2,3]")
+                .when().get("/")
+                .then().statusCode(200).extract().response().getBody().jsonPath();
+
+        String clearBody = jspath.get("body").toString().replace("_server_addon", "");
+        System.out.println("body: "+ clearBody);
     }
 
     @Test(groups = {"localhost"})

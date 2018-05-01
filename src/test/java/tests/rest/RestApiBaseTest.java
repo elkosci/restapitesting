@@ -29,7 +29,7 @@ public class RestApiBaseTest {
     protected static File logFileHandle;
     protected static Map<String, String> config;
 
-    @BeforeSuite
+    @BeforeSuite(alwaysRun = true)
     public void setUpSuite(){
         try {
             config = GetConfiguration.getProperites();
@@ -53,7 +53,7 @@ public class RestApiBaseTest {
             ex.printStackTrace();
         }
     }
-    @AfterSuite
+    @AfterSuite(alwaysRun = true)
     public void tearDownSuite(){
         if (outFileLog != null){
             outFileLog.close();
