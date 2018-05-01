@@ -1,0 +1,3 @@
+/* list of files in current directory */
+File file = new File(".");
+for(String fileNames : file.list()) System.out.println(fileNames);
