@@ -134,6 +134,7 @@ public class RestPhotosTests extends RestApiBaseTest {
          * @purpose: parsing output
          *
          * */
+        long startTime = System.nanoTime();
         JSONObject o =
                 new JSONObject();
         o.put("id", "some text to manipulate");
@@ -147,7 +148,8 @@ public class RestPhotosTests extends RestApiBaseTest {
                         .when().get("/")
                         .then().statusCode(200)
                         .extract().response();
-
+        long estimatedTime = System.nanoTime() - startTime;
+        Reporter.log("Measured time: " + estimatedTime,  true);
         JsonPath jsonPath = response.jsonPath();
         Map<String, String> list = jsonPath.getMap("headers");
         String body1 = jsonPath.getString("body");

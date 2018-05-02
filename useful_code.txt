@@ -44,3 +44,17 @@ http.createServer((request, response) => {
         response.end();
   });
 }).listen(3000);
+
+
+mongodb:
+
+show dbs
+use myDB
+show collections
+db.getCollectionNames() -> [ "people" ]
+db.people.insert({ "id":1, "name": "Kostek"})
+db.people.count()
+db.people.find({"id":  1 })
+db.people.findOne({ "id": 1, "naz": "wa"} )
+db.people.find({"id": {$exists: true} })
+db.people.find({id: {$exists: true}})
