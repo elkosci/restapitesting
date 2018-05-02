@@ -263,5 +263,48 @@ public class RestPostsTests extends RestApiBaseTest {
         assertThat(body2).isEqualToIgnoringCase("{\"id\":\"some text to manipulate\"}_server_addon_server_addon");
         assertThat(body2).isEqualToIgnoringCase(textToSend + "_server_addon_server_addon");
     }
+    @Test(groups = {"localhost"})
+    public void testGetOnLocalhostSendParams() {
+        String responseString =
+                given().spec(specLocalhost)
+                        .when().get("/?username=Kostek&fullname=elkosci")
+                        .then().statusCode(200)
+                        .contentType(ContentType.JSON)
+                        .header("Content-Type", "application/json")
+                        .extract().response().asString();
+        Reporter.log(String.format("Rsp body from localhost resp: \"%s\".", responseString), true);
+        String[] user = {"kostek", "elkosci"};
+            given().spec(specLocalhost)
+                    .when().get(String.format("/?username=%s&fullname=%s",user[0], user[1]))
+                    .then().statusCode(200)
+                    .contentType(ContentType.JSON)
+//                    .header("Content-Type", "application/json")
+                    .body("body", containsString(String.format("Hello %s %s",user[0], user[1])));
+    }
+    @Test(groups = {"localhost"})
+    public void testPostOnLocalhostSendParams() {
+        JSONObject o =
+                new JSONObject();
+        o.put("username", "Kostek123123");
+        o.put("fullname", "Lukasz");
+        String textToSend =
+                JSONValue.toJSONString(o);
+        given().spec(specLocalhost).body(textToSend)
+                .when().post("/")
+                .then().statusCode(200)
+                .contentType(ContentType.JSON)
+                .header("Content-Type", "application/json")
+                .body("body", containsString(String.format("Hello %s %s", o.get("username"), o.get("fullname"))));
+
+        String responseHello = given().spec(specLocalhost).body(textToSend)
+                .when().post("/")
+                .then().statusCode(200)
+                .contentType(ContentType.JSON)
+                .header("Content-Type", "application/json").extract().body().asString();
+        String bodyPart = from(responseHello).get("body");
+        assertThat(bodyPart).isEqualTo(String.format("Hello %s %s", o.get("username"), o.get("fullname")));
+        Reporter.log(String.format("Rsp body from localhost via POST resp: \"%s\".", responseHello), true);
+        Reporter.log(String.format("Rsp body from localhost via POST body: \"%s\".", bodyPart), true);
+    }
 
 }
