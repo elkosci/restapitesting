@@ -1,3 +1,9 @@
+http://mvnrepository.com
+https://www.jetbrains.com/idea/download/
+
+
+
+
 https://blog.philipphauer.de/testing-restful-services-java-best-practices/
 http://www.baeldung.com/integration-testing-a-rest-api
 http://toolsqa.com/rest-assured/read-response-body-using-rest-assured/
@@ -5,4 +11,29 @@ http://joel-costigliola.github.io/assertj/
 http://www.vogella.com/tutorials/AssertJ/article.html
 https://howtodoinjava.com/testng/testng-executing-parallel-tests/
 http://testng.org/doc/eclipse.html#eclipse-create-launch
+https://examples.javacodegeeks.com/enterprise-java/testng/testng-dataprovider-example/
 
+
+selenium:
+http://chromedriver.chromium.org/downloads
+https://www.pluralsight.com/guides/getting-started-with-page-object-pattern-for-your-selenium-tests
+https://www.guru99.com/first-webdriver-script.html
+https://gist.github.com/ikstob/4113207
+https://saucelabs.com/resources/articles/getting-started-with-webdriver-selenium-for-java-in-eclipse
+https://stackoverflow.com/questions/17818420/webelement-defined-by-findby-annotation-returns-null-pointer
+
+waits:
+https://gist.github.com/sachinArya/d6db6d4942407c19ae93
+http://learn-automation.com/fluentwait-in-selenium-webdriver/
+https://sqa.stackexchange.com/questions/12866/how-fluentwait-is-different-from-webdriverwait
+http://toolsqa.com/selenium-webdriver/implicit-explicit-n-fluent-wait/
+
+
+screenshot:
+https://www.softwaretestingmaterial.com/capture-screenshot-of-failed-test-cases-using-selenium-webdriver-2/
+https://stackoverflow.com/questions/32270161/how-to-take-screen-shot-for-failed-test-cases-using-selenium-webdriver-in-java
+http://artoftesting.com/automationTesting/screenShotInSelenium.html
+http://www.seleniumeasy.com/testng-tutorials/how-to-take-screenshot-for-only-failed-tests-using-webdriver
+
+testng + java + selenium -> screenshot on failure/success/skipped
+https://testerlive.wordpress.com/2016/08/04/4-how-to-take-screenshot-on-failure-success-or-skip-selenium-testng-java-maven-project/

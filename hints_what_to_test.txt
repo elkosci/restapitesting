@@ -1,0 +1,43 @@
+PATH:
+happy
+Status code -> Content-Type -> Json content
+unhappy
+not existing/wrong url -> 404
+i.e. wrong content-type in request > 500
+gateway timeout 504 (mock only)
+
+1. methods
+ - post
+ - get
+ - put
+ - delete
+
+2. Correct
+ - url
+ - parameters of body
+ - headers
+
+2. Wrong (boundary values)
+ - url
+ - method
+ - parameters of body
+ headers
+ - content-type
+ - accept
+ User-Agent: Mozilla/4.0 (compatible; MSIE5.01; Windows NT)
+ - host
+ - not accepted
+ - cookie/wrong format of cookie
+
+3. Data retrieve
+- valid values
+- invalid values
+4. Data send
+ Create / update
+  - valid
+  - invalid
+  - duplicates
+5. Data delete
+  - valid
+  - invalid
+  - same data more than once
