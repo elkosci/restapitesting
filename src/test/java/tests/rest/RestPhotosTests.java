@@ -1,6 +1,9 @@
 package tests.rest;
 
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.testng.Reporter;
 import org.testng.annotations.*;
 
@@ -123,5 +126,53 @@ public class RestPhotosTests extends RestApiBaseTest {
         given().spec(specMalformed)
                 .when().post("/photos")
                 .then().statusCode(500);
+    }
+    @Test(groups = {"localhost"})
+    public void testGetOnLocalhostTextWithCookiesParsingOutput() {
+        /*
+         * @author: elkosci
+         * @purpose: parsing output
+         *
+         * */
+        long startTime = System.nanoTime();
+        JSONObject o =
+                new JSONObject();
+        o.put("id", "some text to manipulate");
+        String textToSend =
+                JSONValue.toJSONString(o);
+        Response response =
+                given().spec(specLocalhostText)
+                        .cookie("Coookie1","value1")
+                        .cookie("cookie123","cokkie_value")
+                        .body(textToSend)
+                        .when().get("/")
+                        .then().statusCode(200)
+                        .extract().response();
+        long estimatedTime = System.nanoTime() - startTime;
+        Reporter.log("Measured time: " + estimatedTime,  true);
+        JsonPath jsonPath = response.jsonPath();
+        Map<String, String> list = jsonPath.getMap("headers");
+        String body1 = jsonPath.getString("body");
+        String new_body = body1;
+        Reporter.log("body1: " + body1,  true);
+        assertThat(body1).isEqualToIgnoringCase(textToSend + "_server_addon");
+        for (String s : list.keySet()) {
+            Reporter.log("val: " + s + " " + list.get(s), true);
+        }
+        assertThat(list.get("connection")).isEqualTo("Keep-Alive");
+        assertThat(list.get("content-type")).contains("text/plain; charset=");
+        assertThat(list.get("cookie")).isEqualTo("Coookie1=value1; cookie123=cokkie_value");
+        Reporter.log(String.format("coookies: %s", list.get("cookie")), true);
+        Reporter.log("new_body: " + new_body, true);
+        Response response2 =
+                given().spec(specLocalhostText).body(new_body)
+                        .when().get("/")
+                        .then().statusCode(200)
+                        .extract().response();
+        JsonPath jsonPath2 = response2.jsonPath();
+        String body2 = jsonPath2.getString("body");
+        Reporter.log("body2: " + body2, true);
+        assertThat(body2).isEqualToIgnoringCase("{\"id\":\"some text to manipulate\"}_server_addon_server_addon");
+        assertThat(body2).isEqualToIgnoringCase(textToSend + "_server_addon_server_addon");
     }
 }
