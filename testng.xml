@@ -12,6 +12,7 @@
                 <!--<include name="text"/>-->
                 <!--<include name="localhost"/>-->
                 <!--<include name="localhost44"/>-->
+                <!--<include name="parametrized"/>-->
             <!--</run>-->
         <!--</groups>-->
         <classes>

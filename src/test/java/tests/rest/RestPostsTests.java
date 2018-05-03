@@ -128,7 +128,7 @@ public class RestPostsTests extends RestApiBaseTest {
     }
 
     @Parameters(value="postId")
-    @Test(groups = {"GET.200", "Posts"})
+    @Test(groups = {"GET.200", "Posts", "parametrized"})
     public void testGetSinglePostViaDtoClassWithParameter(int postId) {
         CommentDTO cdto = given().spec(spec)
                 .when().get(String.format("/posts/%d", postId))
